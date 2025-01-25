@@ -1,0 +1,46 @@
+{
+  "name": "becmi-crawl",
+  "version": "1.0.0",
+  "description": "BECMI dungeon crawling engine",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint src",
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/watch.mjs",
+    "start": "node scripts/watch.mjs",
+    "start-prod": "node scripts/watch.mjs production",
+    "find-deadcode": "ts-prune"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.5.0",
+    "react": "^19.0.0",
+    "react-aria-components": "^1.6.0",
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0",
+    "redux": "^5.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@types/eslint__js": "^8.42.3",
+    "@types/node": "^22.10.10",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "classnames": "^2.5.1",
+    "dotenv": "^16.4.7",
+    "esbuild": "^0.24.2",
+    "esbuild-sass-plugin": "^3.3.1",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "postcss": "^8.5.1",
+    "postcss-modules": "^6.0.1",
+    "prettier": "^3.4.2",
+    "ts-prune": "^0.10.3",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
+  }
+}
