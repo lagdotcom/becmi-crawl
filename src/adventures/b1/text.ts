@@ -1,5 +1,5 @@
 // TODO
-export const intro1 = "TODO: introduction to the module";
+export const intro1TODO = "TODO: introduction to the module";
 
 export const intro2 = {
   no: "You each rack your brains for knowledge of the place, but you come up short.",
@@ -29,7 +29,7 @@ export const intro2 = {
 };
 
 // TODO
-export const intro3 = "TODO: approach to the castle";
+export const intro3TODO = "TODO: approach to the castle";
 
 export const entrance = {
   approach1:
@@ -44,4 +44,4 @@ export const entrance = {
 };
 
 // TODO
-export const alcoves = "TODO";
+export const alcovesTODO = "TODO";

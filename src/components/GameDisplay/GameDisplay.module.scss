@@ -1,0 +1,7 @@
+.log {
+  .texts {
+    span + span:before {
+      content: " ";
+    }
+  }
+}

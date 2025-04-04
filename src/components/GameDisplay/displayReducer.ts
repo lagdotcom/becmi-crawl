@@ -1,18 +1,25 @@
-type DisplayItem =
-  | { type: "paragraph"; value: string }
-  | { type: "texts"; value: string }
-  | { type: "ul"; items: string[] };
+import { Styling } from "../../types";
+
+interface TextItem {
+  value: string;
+  style?: Styling;
+}
+
+export type DisplayItem =
+  | ({ type: "paragraph" } & TextItem)
+  | { type: "texts"; items: TextItem[] }
+  | { type: "ul"; items: TextItem[] };
 
 type DisplayState = DisplayItem[];
 
 type DisplayAction =
-  | { type: "paragraph"; value: string }
-  | { type: "text"; value: string }
-  | { type: "item"; value: string };
+  | { type: "paragraph"; value: string; style?: Styling }
+  | { type: "text"; value: string; style?: Styling }
+  | { type: "item"; value: string; style?: Styling };
 
 export default function displayReducer(
   items: DisplayState,
-  { type, value }: DisplayAction,
+  { type, value, style }: DisplayAction,
 ): DisplayState {
   const top: DisplayItem | undefined = items[items.length - 1];
   const exceptTop = items.slice(0, -1);
@@ -20,18 +27,21 @@ export default function displayReducer(
   switch (type) {
     case "item":
       if (top?.type === "ul")
-        return exceptTop.concat({ type: "ul", items: top.items.concat(value) });
-      return items.concat({ type: "ul", items: [value] });
+        return exceptTop.concat({
+          type: "ul",
+          items: top.items.concat({ value, style }),
+        });
+      return items.concat({ type: "ul", items: [{ value, style }] });
 
     case "paragraph":
-      return items.concat({ type: "paragraph", value });
+      return items.concat({ type: "paragraph", value, style });
 
     case "text":
       if (top?.type === "texts")
         return exceptTop.concat({
           type: "texts",
-          value: `${top.value} ${value}`,
+          items: top.items.concat({ value, style }),
         });
-      return items.concat({ type: "texts", value });
+      return items.concat({ type: "texts", items: [{ value, style }] });
   }
 }

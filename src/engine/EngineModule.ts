@@ -3,6 +3,8 @@ import {
   BECMINode,
   ModuleId,
   ModuleInfo,
+  MonsterBaseName,
+  MonsterId,
   MonsterOverride,
   NodeId,
   StateId,
@@ -16,7 +18,7 @@ export default class EngineModule implements BECMIModule {
   private nextId: number;
 
   id: ModuleId;
-  monsters: Map<string, ModuleMonster>;
+  monsters: Map<MonsterId, ModuleMonster>;
   nodes: Map<NodeId, EngineNode>;
   states: Map<StateId, EngineState<unknown>>;
 
@@ -36,13 +38,14 @@ export default class EngineModule implements BECMIModule {
     return `${this.id}:${prefix}${this.nextId++}`;
   }
 
-  monster(base: string, override?: MonsterOverride) {
+  monster(base: MonsterBaseName, override?: MonsterOverride) {
     const monster: ModuleMonster = {
-      module: this.getNextId(base),
+      id: this.getNextId(base),
+      module: this.id,
       base,
       override,
     };
-    this.monsters.set(monster.module, monster);
+    this.monsters.set(monster.id, monster);
 
     return monster;
   }

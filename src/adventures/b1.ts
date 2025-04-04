@@ -1,5 +1,9 @@
 import { mkDice as d } from "../tools";
+import { Styling } from "../types";
 import * as txt from "./b1/text";
+
+const todo: Styling = { color: "magenta" };
+const minorSecret: Styling = { backgroundColor: "#222" };
 
 export const B1 = window.BECMI.register({
   id: "B1",
@@ -12,23 +16,19 @@ export const B1 = window.BECMI.register({
 });
 
 const intro1 = B1.node("intro1", (e) => {
-  // TODO
-  e.paragraph(txt.intro1);
+  e.paragraph(txt.intro1TODO, todo);
   return e.next(intro2);
 });
 
 const intro2 = B1.node("intro2", (e) => {
-  const legends = new Set<string>();
+  const shuffled = e.shuffle(txt.intro2.legends);
+  const totalKnown = Math.min(
+    shuffled.length,
+    e.dice(e.party.length, 4, -e.party.length),
+  );
+  const legends = shuffled.slice(0, totalKnown);
 
-  // NOTE this is different; the module says to roll again if duplicates are rolled
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  for (const _ of e.party) {
-    const known = e.randomPick([1, 2, 3, 0]);
-    for (let i = 0; i < known; i++)
-      legends.add(e.randomPick(txt.intro2.legends));
-  }
-
-  if (!legends.size) e.paragraph(txt.intro2.no);
+  if (!legends.length) e.paragraph(txt.intro2.no);
   else {
     e.paragraph(txt.intro2.yes);
     for (const legend of legends) e.listItem(legend);
@@ -38,8 +38,7 @@ const intro2 = B1.node("intro2", (e) => {
 });
 
 const intro3 = B1.node("intro3", (e) => {
-  // TODO
-  e.paragraph(txt.intro3);
+  e.paragraph(txt.intro3TODO, todo);
   return e.next(entrance);
 });
 
@@ -69,7 +68,7 @@ const entranceGo = B1.node("entrance.go", (e) => {
   if (!noticedForcedDoor.get()) {
     if (e.percentage(e.party.length * 10)) {
       noticedForcedDoor.set(true);
-      e.text(txt.entrance.noticeWhileOpeningDoor);
+      e.text(txt.entrance.noticeWhileOpeningDoor, minorSecret);
     }
   }
 
@@ -77,7 +76,7 @@ const entranceGo = B1.node("entrance.go", (e) => {
 });
 
 const a1Alcoves = B1.node("alcoves", (e) => {
-  e.paragraph(txt.alcoves);
+  e.paragraph(txt.alcovesTODO, todo);
 
   // TODO
 });

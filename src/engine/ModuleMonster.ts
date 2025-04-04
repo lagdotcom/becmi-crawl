@@ -1,7 +1,13 @@
-import { ModuleId, MonsterOverride } from "../types";
+import {
+  ModuleId,
+  MonsterBaseName,
+  MonsterId,
+  MonsterOverride,
+} from "../types";
 
 export default interface ModuleMonster {
+  id: MonsterId;
   module: ModuleId;
-  base: string;
+  base: MonsterBaseName;
   override?: MonsterOverride;
 }

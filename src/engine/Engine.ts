@@ -1,7 +1,7 @@
 import { setModuleState } from "../state/game";
 import { selectParty } from "../state/selectors";
 import { AppAction, AppStore } from "../state/store";
-import { BECMIEngine, BECMINode, StateId } from "../types";
+import { BECMIEngine, BECMINode, StateId, Styling } from "../types";
 import EngineChar from "./Char";
 import EngineMenuBuilder from "./EngineMenuBuilder";
 import EngineNode from "./EngineNode";
@@ -54,12 +54,29 @@ export default class Engine implements BECMIEngine {
     return info;
   }
 
-  randomPick<T>(items: T[]) {
-    const index = Math.random() * items.length;
-    return items[Math.floor(index)];
+  dice(count: number, size: number, bonus = 0) {
+    let total = 0;
+    for (let i = 0; i < count; i++) total += Math.ceil(Math.random() * size);
+    return total + bonus;
   }
   percentage(chance: number) {
     return Math.random() < chance / 100;
+  }
+  randomPick<const T>(items: T[]) {
+    const index = Math.random() * items.length;
+    return items[Math.floor(index)];
+  }
+  shuffle<const T>(source: T[]) {
+    const items = Array<T>(source.length);
+
+    for (let i = 0; i < source.length; i++) {
+      const j = Math.floor(Math.random() * i);
+      items[i] = source[i];
+      items[i] = items[j];
+      items[j] = source[i];
+    }
+
+    return items;
   }
 
   goto(node: BECMINode) {
@@ -75,17 +92,17 @@ export default class Engine implements BECMIEngine {
       });
   }
 
-  listItem(value: string) {
-    this.fire("listItem", { value });
+  listItem(value: string, style?: Styling) {
+    this.fire("listItem", { value, style });
   }
   next(node: BECMINode) {
     this.fire("next", { node });
   }
-  paragraph(value: string) {
-    this.fire("paragraph", { value });
+  paragraph(value: string, style?: Styling) {
+    this.fire("paragraph", { value, style });
   }
-  text(value: string) {
-    this.fire("text", { value });
+  text(value: string, style?: Styling) {
+    this.fire("text", { value, style });
   }
 
   getState<T>(id: StateId) {

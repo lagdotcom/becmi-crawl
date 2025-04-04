@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 // https://spin.atomicobject.com/typescript-flexible-nominal-typing/
 interface Flavouring<FlavourT> {
   _type?: FlavourT;
@@ -11,6 +13,8 @@ export type CoinWeight = Flavour<number, "CoinWeight">;
 export type Feet = Flavour<number, "Feet">;
 export type HitDice = Flavour<number, "HitDice">;
 export type ModuleId = Flavour<string, "ModuleId">;
+export type MonsterBaseName = Flavour<string, "MonsterBaseName">;
+export type MonsterId = Flavour<string, "MonsterId">;
 export type NodeId = Flavour<string, "NodeId">;
 export type StateId = Flavour<string, "StateId">;
 
@@ -30,7 +34,7 @@ export interface ModuleInfo {
 
 export interface BECMIModule {
   node: (id: NodeId, enter: BECMINode["enter"]) => BECMINode;
-  monster: (name: string, override?: MonsterOverride) => any;
+  monster: (name: MonsterBaseName, override?: MonsterOverride) => any;
   state: <T>(id: StateId, defaultValue: T) => BECMIState<T>;
 }
 
@@ -76,17 +80,21 @@ export interface CharData {
 
 export interface BECMIChar extends CharData {}
 
+export type Styling = Pick<CSSProperties, "color" | "backgroundColor">;
+
 export interface BECMIEngine {
   party: BECMIChar[];
 
-  randomPick: <T>(items: T[]) => T;
+  dice: (count: number, size: number, bonus?: number) => number;
   percentage: (chance: number) => boolean;
+  randomPick: <const T>(items: T[]) => T;
+  shuffle: <const T>(items: T[]) => T[];
 
   goto: (node: BECMINode) => void;
   next: (node: BECMINode) => void;
-  paragraph: (value: string) => void;
-  text: (value: string) => void;
-  listItem: (value: string) => void;
+  paragraph: (value: string, style?: Styling) => void;
+  text: (value: string, style?: Styling) => void;
+  listItem: (value: string, style?: Styling) => void;
 
   menu: () => BECMIMenuBuilder;
 }
