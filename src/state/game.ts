@@ -1,15 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { CharId, ModuleId, StateId } from "../types";
+import { CharId, ModuleId } from "../types";
 
 export interface GameState {
   module?: ModuleId;
-  moduleState: Record<string, unknown>;
   party: CharId[];
 }
 
 const initialState: GameState = {
-  moduleState: {},
   party: [],
 };
 
@@ -17,15 +15,6 @@ export const gameSlice = createSlice({
   name: "game",
   initialState,
   reducers: {
-    setModuleState(
-      state,
-      {
-        payload: { id, value },
-      }: PayloadAction<{ id: StateId; value: unknown }>,
-    ) {
-      state.moduleState[id] = value;
-    },
-
     startModule(
       state,
       {
@@ -39,4 +28,4 @@ export const gameSlice = createSlice({
 });
 
 export default gameSlice.reducer;
-export const { setModuleState, startModule } = gameSlice.actions;
+export const { startModule } = gameSlice.actions;

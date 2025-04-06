@@ -3,6 +3,8 @@
 import { config as loadDotEnvConfig } from "dotenv";
 import { postcssModules, sassPlugin } from "esbuild-sass-plugin";
 
+import InkModule from "./InkModule.mjs";
+
 /**
  *
  * @param {string|undefined} nodeEnv NODE_ENV value
@@ -41,6 +43,7 @@ export default function getBuildConfig(nodeEnv = "development") {
       sassPlugin({
         filter: /\.scss$/,
       }),
+      InkModule(),
     ],
     loader: {
       ".json": "file",

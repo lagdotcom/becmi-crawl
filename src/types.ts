@@ -1,5 +1,3 @@
-import { CSSProperties } from "react";
-
 // https://spin.atomicobject.com/typescript-flexible-nominal-typing/
 interface Flavouring<FlavourT> {
   _type?: FlavourT;
@@ -16,10 +14,10 @@ export type ModuleId = Flavour<string, "ModuleId">;
 export type MonsterBaseName = Flavour<string, "MonsterBaseName">;
 export type MonsterId = Flavour<string, "MonsterId">;
 export type NodeId = Flavour<string, "NodeId">;
-export type StateId = Flavour<string, "StateId">;
+export type ResourceURL = Flavour<string, "ResourceURL">;
 
 export interface BECMILibrary {
-  register: (info: ModuleInfo) => BECMIModule;
+  register: (info: ModuleInfo) => void;
 }
 
 export interface ModuleInfo {
@@ -28,30 +26,7 @@ export interface ModuleInfo {
   author: string;
   partySize: [min: number, max: number];
   levelRange: [min: ClassLevel, max: ClassLevel];
-
-  begin: (e: BECMIEngine) => void;
-}
-
-export interface BECMIModule {
-  node: (id: NodeId, enter: BECMINode["enter"]) => BECMINode;
-  monster: (name: MonsterBaseName, override?: MonsterOverride) => any;
-  state: <T>(id: StateId, defaultValue: T) => BECMIState<T>;
-}
-
-export interface BECMIState<T> {
-  id: StateId;
-  defaultValue: T;
-  get(): T;
-  set(value: T): void;
-}
-
-export interface BECMINode {
-  id: NodeId;
-  enter: (e: BECMIEngine, previousNode?: BECMINode) => void;
-  state: <T>(id: StateId, defaultValue: T) => BECMIState<T>;
-
-  tag: (tag: string) => BECMINode;
-  hasTag: (tag: string) => boolean;
+  inkUrl: ResourceURL;
 }
 
 export type AbilityScore = "str" | "int" | "wis" | "dex" | "con" | "cha";
@@ -82,31 +57,6 @@ export interface CharData {
 }
 
 export interface BECMIChar extends CharData {}
-
-export type Styling = Pick<CSSProperties, "color" | "backgroundColor">;
-
-export interface BECMIEngine {
-  party: BECMIChar[];
-
-  dice: (count: number, size: number, bonus?: number) => number;
-  percentage: (chance: number) => boolean;
-  randomPick: <const T>(items: T[]) => T;
-  shuffle: <const T>(items: T[]) => T[];
-
-  goto: (node: BECMINode) => void;
-
-  next: (node: BECMINode) => void;
-  paragraph: (value: string, style?: Styling) => void;
-  text: (value: string, style?: Styling) => void;
-  textNew: (value: string, style?: Styling) => void;
-  listItem: (value: string, style?: Styling) => void;
-
-  menu: () => BECMIMenuBuilder;
-}
-
-export interface BECMIMenuBuilder {
-  option: (value: string, node: BECMINode) => void;
-}
 
 export type Dice = [
   count: number,

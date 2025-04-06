@@ -1,10 +1,9 @@
-import { setModuleState } from "../state/game";
+import { Story } from "inkjs";
+
 import { selectParty } from "../state/selectors";
 import { AppAction, AppStore } from "../state/store";
-import { BECMIEngine, BECMINode, StateId, Styling } from "../types";
+import { ResourceURL } from "../types";
 import EngineChar from "./Char";
-import EngineMenuBuilder from "./EngineMenuBuilder";
-import EngineNode from "./EngineNode";
 import { EngineEventHandler, EngineEventName, EngineEvents } from "./events";
 import Library from "./Library";
 
@@ -12,18 +11,15 @@ type EngineListeners = {
   [E in EngineEventName]: Set<EngineEventHandler<E>>;
 };
 
-export default class Engine implements BECMIEngine {
+export default class Engine {
   listeners: EngineListeners;
-  menuBuilder?: EngineMenuBuilder;
-  node!: BECMINode;
+  story!: Story;
 
   constructor(private store: AppStore) {
     this.listeners = {
       listItem: new Set(),
-      menu: new Set(),
-      next: new Set(),
       paragraph: new Set(),
-      text: new Set(),
+      choices: new Set(),
     };
   }
 
@@ -35,6 +31,31 @@ export default class Engine implements BECMIEngine {
 
   dispatch(action: AppAction) {
     return this.store.dispatch(action);
+  }
+
+  async loadInk(url: ResourceURL) {
+    const response = await fetch(url);
+    const raw = await response.json();
+
+    this.story = new Story(raw);
+    this.run();
+  }
+
+  private run() {
+    while (this.story.canContinue) {
+      const str = this.story.Continue();
+      if (!str?.trim()) continue;
+
+      if (str.startsWith("•")) this.listItem(str.slice(1).trim());
+      else this.paragraph(str.trim());
+    }
+
+    this.choices(this.story.currentChoices.map((ch) => ch.text));
+  }
+
+  choose(index: number) {
+    this.story.ChooseChoiceIndex(index);
+    this.run();
   }
 
   on<E extends EngineEventName>(event: E, handler: EngineEventHandler<E>) {
@@ -79,46 +100,14 @@ export default class Engine implements BECMIEngine {
     return items;
   }
 
-  goto(node: BECMINode) {
-    console.log(`[Engine.goto] ${node.id} from ${this.node?.id}`);
-    const previousNode = this.node;
-    this.menuBuilder = undefined;
-    this.node = node;
-    (node as EngineNode).enter(this, previousNode);
-
-    if (this.menuBuilder)
-      this.fire("menu", {
-        options: (this.menuBuilder as EngineMenuBuilder).options,
-      });
+  listItem(value: string) {
+    this.fire("listItem", { value });
   }
-
-  listItem(value: string, style?: Styling) {
-    this.fire("listItem", { value, style });
+  paragraph(value: string) {
+    this.fire("paragraph", { value });
   }
-  next(node: BECMINode) {
-    this.fire("next", { node });
-  }
-  paragraph(value: string, style?: Styling) {
-    this.fire("paragraph", { value, style });
-  }
-  text(value: string, style?: Styling) {
-    this.fire("text", { value, style });
-  }
-  textNew(value: string, style?: Styling) {
-    this.fire("text", { value, style, newBlock: true });
-  }
-
-  getState<T>(id: StateId) {
-    return this.store.getState().game.moduleState[id] as T | undefined;
-  }
-
-  setState<T>(id: StateId, value: T) {
-    this.dispatch(setModuleState({ id, value }));
-  }
-
-  menu() {
-    this.menuBuilder = new EngineMenuBuilder();
-    return this.menuBuilder;
+  choices(value: string[]) {
+    this.fire("choices", { value });
   }
 }
 

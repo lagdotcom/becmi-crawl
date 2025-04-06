@@ -1,10 +1,16 @@
-import { memo, useCallback, useEffect, useReducer, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 
-import { MenuOption } from "../../engine/EngineMenuBuilder";
 import { useEngineEvent, useLibrary } from "../../hooks/LibraryProvider";
 import { selectCharacterIds, selectModuleById } from "../../state/selectors";
 import { useAppSelector } from "../../state/store";
-import { BECMINode, ModuleId } from "../../types";
+import { ModuleId } from "../../types";
 import displayReducer, { DisplayItem } from "./displayReducer";
 import styles from "./GameDisplay.module.scss";
 
@@ -18,26 +24,13 @@ const LogItem = memo(function LogItem({ item }: { item: DisplayItem }) {
       return (
         <ul>
           {item.items.map((ti, i) => (
-            <li key={i} style={ti.style}>
-              {ti.value}
-            </li>
+            <li key={i}>{ti.value}</li>
           ))}
         </ul>
       );
 
-    case "texts":
-      return (
-        <p className={styles.texts}>
-          {item.items.map((ti, i) => (
-            <span key={i} style={ti.style}>
-              {ti.value}
-            </span>
-          ))}
-        </p>
-      );
-
     case "paragraph":
-      return <p style={item.style}>{item.value}</p>;
+      return <p>{item.value}</p>;
   }
 });
 
@@ -46,67 +39,54 @@ export default function GameDisplay({ moduleId }: GameDisplayProps) {
   const module = useAppSelector((state) => selectModuleById(state, moduleId));
   const allChars = useAppSelector(selectCharacterIds);
 
-  const [nextNode, setNextNode] = useState<BECMINode>();
-  const [menuOptions, setMenuOptions] = useState<MenuOption[]>();
+  const mainRef = useRef<HTMLElement>(null);
+  const [menuOptions, setMenuOptions] = useState<string[]>();
   const [display, df] = useReducer(displayReducer, []);
 
-  useEngineEvent(
-    "listItem",
-    ({ value, style }) => df({ type: "item", value, style }),
-    [df],
-  );
-  useEngineEvent(
-    "paragraph",
-    ({ value, style }) => df({ type: "paragraph", value, style }),
-    [df],
-  );
-  useEngineEvent(
-    "text",
-    ({ value, style, newBlock }) =>
-      df({ type: "text", value, style, newBlock }),
-    [df],
-  );
-  useEngineEvent("menu", ({ options }) => setMenuOptions(options), [
+  useEngineEvent("listItem", ({ value }) => df({ type: "item", value }), [df]);
+  useEngineEvent("paragraph", ({ value }) => df({ type: "paragraph", value }), [
+    df,
+  ]);
+  useEngineEvent("choices", ({ value }) => setMenuOptions(value), [
     setMenuOptions,
   ]);
 
-  useEngineEvent("next", ({ node }) => setNextNode(node));
-
-  const goto = useCallback(
-    (node: BECMINode) => {
+  const choose = useCallback(
+    (index: number) => {
       setMenuOptions(undefined);
-      setNextNode(undefined);
-      lib.engine.goto(node);
+      lib.engine.choose(index);
     },
     [lib.engine],
   );
-
-  const onClickNext = useCallback(() => {
-    if (nextNode) goto(nextNode);
-  }, [goto, nextNode]);
 
   useEffect(() => {
     lib.begin(moduleId, allChars);
   }, [allChars, moduleId, lib]);
 
+  useEffect(() => {
+    if (mainRef.current)
+      mainRef.current.scrollTop = mainRef.current.scrollHeight;
+  }, [display, menuOptions]);
+
   return (
-    <div>
+    <div className={styles.layout}>
       <h1>{module.name}</h1>
-      <div className={styles.log}>
-        {display.map((item, i) => (
-          <LogItem key={i} item={item} />
-        ))}
-      </div>
-      {menuOptions && (
-        <ul>
-          {menuOptions.map(({ value, node }, i) => (
-            <li key={i}>
-              <button onClick={() => goto(node)}>{value}</button>
-            </li>
+      <main ref={mainRef}>
+        <div className={styles.log}>
+          {display.map((item, i) => (
+            <LogItem key={i} item={item} />
           ))}
-        </ul>
-      )}
-      {nextNode && <button onClick={onClickNext}>Next</button>}
+        </div>
+        {menuOptions && (
+          <ul className={styles.options}>
+            {menuOptions.map((value, i) => (
+              <li key={i}>
+                <button onClick={() => choose(i)}>{value}</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </main>
     </div>
   );
 }

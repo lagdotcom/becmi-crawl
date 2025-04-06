@@ -2670,6 +2670,11 @@ imurmurhash@^0.1.4:
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==
 
+inkjs@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/inkjs/-/inkjs-2.3.1.tgz#da7b143419fd5930f2d1f9d074b1b7f2a87b92df"
+  integrity sha512-xVjec+rFVPCWfnrFC91O7G1FaOrSzMTtjRwSmm/yzqy5MkHTZnZRpEzal1xgInGGV8BfLcg55theaSAs+v9TOg==
+
 internal-slot@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/internal-slot/-/internal-slot-1.1.0.tgz#1eac91762947d2f7056bc838d93e13b2e9604961"
