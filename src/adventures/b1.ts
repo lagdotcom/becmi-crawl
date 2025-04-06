@@ -72,14 +72,110 @@ const entranceGo = B1.node("entrance.go", (e) => {
     }
   }
 
-  return e.goto(a1Alcoves);
+  return e.goto(a1);
 });
 
-const a1Alcoves = B1.node("alcoves", (e) => {
-  e.paragraph(txt.alcovesTODO, todo);
+const a1 = B1.node("a1", (e, p) => {
+  if (!p?.hasTag("alcoves")) e.paragraph(txt.a1.alcoves.main);
 
-  // TODO
+  const m = e.menu();
+  m.option("look at the first set of alcoves", a1Empty);
+  m.option("look at the second set of alcoves", a1Empty);
+  m.option("look at the third set of alcoves", a1Mouths);
+  m.option("go up the steps", a1Steps);
 });
+const a1HeardMouthMessage = a1.state("heardMouthMessage", false);
+
+const a1Empty = B1.node("a1:empty", (e) => {
+  e.paragraph(txt.a1.alcoves.empty);
+  return e.goto(a1);
+}).tag("alcoves");
+
+const a1Mouths = B1.node("a1:mouths", (e) => {
+  if (!a1HeardMouthMessage.get()) e.goto(a1MouthMessage);
+  else {
+    e.text(txt.a1.alcoves.empty);
+    e.text(txt.a1.alcoves.emptyMouth);
+    return e.goto(a1);
+  }
+}).tag("alcoves");
+
+const a1MouthMessage = B1.node("a1:mouthMessage", (e, p) => {
+  if (p === a1Mouths) e.text(txt.a1.alcoves.mouthInterruptSearch);
+  else if (p === a1Steps) e.text(txt.a1.alcoves.mouthInterruptSteps);
+
+  for (const { text, attach } of txt.a1.alcoves.mouths) {
+    if (attach) e.text(text);
+    else e.textNew(text);
+  }
+
+  a1HeardMouthMessage.set(true);
+  return e.goto(p === a1Steps ? a1Intersection : a1);
+}).tag("alcoves");
+
+const a1Steps = B1.node("a1:steps", (e) => {
+  if (!a1HeardMouthMessage.get()) return e.goto(a1MouthMessage);
+  return e.goto(a1Intersection);
+});
+
+const a1Intersection = B1.node("a1:intersection", (e, p) => {
+  if (!p?.hasTag("body")) e.paragraph(txt.a1.intersection.main);
+
+  const m = e.menu();
+  m.option("look at the first body", a1Body1);
+  m.option("look at the second body", a1Body2);
+  // m.option("look at the third body", a1Body3);
+  // m.option("look at the four body", a1Body4);
+  // m.option("look at the fifth body", a1Body5);
+  m.option("move into the corridor to the south", a1);
+});
+
+const a1Body1 = B1.node("a1:body1", (e) => {
+  e.paragraph(txt.a1.intersection.body1);
+
+  const m = e.menu();
+  if (!a1Body1Examined.get())
+    m.option("examine the body more closely", a1Body1x);
+  m.option("(back)", a1Intersection);
+}).tag("body");
+const a1Body1x = B1.node("a1:body1x", (e) => {
+  a1Body1Examined.set(true);
+  e.paragraph(txt.a1.intersection.body1x);
+  // TODO belt pouch w/ 5gp
+
+  e.goto(a1Body1);
+});
+const a1Body1Examined = a1Body1.state("examined", false);
+
+const a1Body2 = B1.node("a1:body2", (e) => {
+  e.paragraph(
+    a1Body2SwordRemoved.get()
+      ? txt.a1.intersection.body2a
+      : txt.a1.intersection.body2,
+  );
+
+  const m = e.menu();
+  if (!a1Body2Examined.get())
+    m.option("examine the body more closely", a1Body2x);
+  if (!a1Body2SwordRemoved.get()) m.option("remove the sword", a1Body2s);
+  m.option("(back)", a1Intersection);
+}).tag("body");
+const a1Body2s = B1.node("a1:body2s", (e) => {
+  a1Body2SwordRemoved.set(true);
+  e.paragraph(txt.a1.intersection.body2s);
+  // TODO useless sword
+
+  e.goto(a1Body2);
+});
+const a1Body2x = B1.node("a1:body2x", (e) => {
+  a1Body2Examined.set(true);
+  e.paragraph(txt.a1.intersection.body2x);
+  // TODO purse w/ 2gp, pouch w/ garlic buds
+
+  e.goto(a1Body2);
+});
+const a1Body2Examined = a1Body2.state("examined", false);
+const a1Body2SwordRemoved = a1Body2.state("swordRemoved", false);
 
 // TODO wandering monster (1 in 6) every 3 turns
 // TODO three checks per night for wandering monsters

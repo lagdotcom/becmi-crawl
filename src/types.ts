@@ -49,6 +49,9 @@ export interface BECMINode {
   id: NodeId;
   enter: (e: BECMIEngine, previousNode?: BECMINode) => void;
   state: <T>(id: StateId, defaultValue: T) => BECMIState<T>;
+
+  tag: (tag: string) => BECMINode;
+  hasTag: (tag: string) => boolean;
 }
 
 export type AbilityScore = "str" | "int" | "wis" | "dex" | "con" | "cha";
@@ -91,9 +94,11 @@ export interface BECMIEngine {
   shuffle: <const T>(items: T[]) => T[];
 
   goto: (node: BECMINode) => void;
+
   next: (node: BECMINode) => void;
   paragraph: (value: string, style?: Styling) => void;
   text: (value: string, style?: Styling) => void;
+  textNew: (value: string, style?: Styling) => void;
   listItem: (value: string, style?: Styling) => void;
 
   menu: () => BECMIMenuBuilder;

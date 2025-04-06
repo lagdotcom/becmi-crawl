@@ -6,7 +6,7 @@ export interface EngineEvents {
   menu: { options: MenuOption[] };
   next: { node: BECMINode };
   paragraph: { value: string; style?: Styling };
-  text: { value: string; style?: Styling };
+  text: { value: string; style?: Styling; newBlock?: boolean };
 }
 export type EngineEventName = keyof EngineEvents;
 export type EngineEventHandler<E extends EngineEventName> = (

@@ -62,7 +62,8 @@ export default function GameDisplay({ moduleId }: GameDisplayProps) {
   );
   useEngineEvent(
     "text",
-    ({ value, style }) => df({ type: "text", value, style }),
+    ({ value, style, newBlock }) =>
+      df({ type: "text", value, style, newBlock }),
     [df],
   );
   useEngineEvent("menu", ({ options }) => setMenuOptions(options), [

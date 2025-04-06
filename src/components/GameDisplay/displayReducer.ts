@@ -14,15 +14,16 @@ type DisplayState = DisplayItem[];
 
 type DisplayAction =
   | { type: "paragraph"; value: string; style?: Styling }
-  | { type: "text"; value: string; style?: Styling }
+  | { type: "text"; value: string; style?: Styling; newBlock?: boolean }
   | { type: "item"; value: string; style?: Styling };
 
 export default function displayReducer(
   items: DisplayState,
-  { type, value, style }: DisplayAction,
+  action: DisplayAction,
 ): DisplayState {
   const top: DisplayItem | undefined = items[items.length - 1];
   const exceptTop = items.slice(0, -1);
+  const { type, value, style } = action;
 
   switch (type) {
     case "item":
@@ -37,7 +38,7 @@ export default function displayReducer(
       return items.concat({ type: "paragraph", value, style });
 
     case "text":
-      if (top?.type === "texts")
+      if (!action.newBlock && top?.type === "texts")
         return exceptTop.concat({
           type: "texts",
           items: top.items.concat({ value, style }),

@@ -6,9 +6,19 @@ export default class EngineNode implements BECMINode {
     private mod: EngineModule,
     public id: NodeId,
     public enter: BECMINode["enter"],
+    public tags: Set<string> = new Set(),
   ) {}
 
   state<T>(id: StateId, defaultValue: T) {
     return this.mod.state(`${this.id}:${id}`, defaultValue);
+  }
+
+  hasTag(tag: string) {
+    return this.tags.has(tag);
+  }
+
+  tag(tag: string) {
+    this.tags.add(tag);
+    return this;
   }
 }

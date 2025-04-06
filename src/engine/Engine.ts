@@ -104,6 +104,9 @@ export default class Engine implements BECMIEngine {
   text(value: string, style?: Styling) {
     this.fire("text", { value, style });
   }
+  textNew(value: string, style?: Styling) {
+    this.fire("text", { value, style, newBlock: true });
+  }
 
   getState<T>(id: StateId) {
     return this.store.getState().game.moduleState[id] as T | undefined;
