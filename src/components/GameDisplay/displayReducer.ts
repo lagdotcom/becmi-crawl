@@ -3,12 +3,14 @@ interface TextItem {
 }
 
 export type DisplayItem =
+  | ({ type: "error" } & TextItem)
   | ({ type: "paragraph" } & TextItem)
   | { type: "ul"; items: TextItem[] };
 
 type DisplayState = DisplayItem[];
 
 type DisplayAction =
+  | { type: "error"; value: string }
   | { type: "paragraph"; value: string }
   | { type: "item"; value: string };
 
@@ -31,5 +33,8 @@ export default function displayReducer(
 
     case "paragraph":
       return items.concat({ type: "paragraph", value });
+
+    case "error":
+      return items.concat({ type: "error", value });
   }
 }

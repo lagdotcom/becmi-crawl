@@ -1,7 +1,7 @@
 import { mkDice as d } from "../tools";
 import { MonsterStats } from "../types";
 
-export const GiantCentipede: MonsterStats = {
+const GiantCentipede: MonsterStats = {
   name: "giant centipede",
   ac: 9,
   hd: 0.5,
@@ -20,3 +20,5 @@ export const GiantCentipede: MonsterStats = {
   rarity: "C",
   terrain: "Cavern, Ruins, Woods",
 };
+
+export const lowlife = [GiantCentipede];

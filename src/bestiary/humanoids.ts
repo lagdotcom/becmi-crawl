@@ -1,7 +1,7 @@
 import { mkDice as d } from "../tools";
 import { MonsterStats } from "../types";
 
-export const Berserker: MonsterStats = {
+const Berserker: MonsterStats = {
   name: "berserker",
   ac: 7,
   hd: 1,
@@ -23,7 +23,7 @@ export const Berserker: MonsterStats = {
   terrain: "Any",
 };
 
-export const Kobold: MonsterStats = {
+const Kobold: MonsterStats = {
   name: "kobold",
   ac: 7,
   hd: 0.5,
@@ -45,7 +45,7 @@ export const Kobold: MonsterStats = {
   terrain: "Cavern, Hill, Mountain, Wood",
 };
 
-export const Orc: MonsterStats = {
+const Orc: MonsterStats = {
   name: "orc",
   ac: 6,
   hd: 1,
@@ -66,7 +66,7 @@ export const Orc: MonsterStats = {
   terrain: "Wilderness (any)",
 };
 
-export const Troglodyte: MonsterStats = {
+const Troglodyte: MonsterStats = {
   name: "troglodyte",
   ac: 5,
   hd: 2,
@@ -87,3 +87,5 @@ export const Troglodyte: MonsterStats = {
   // TODO nauseating stench: in combat, save vs. poison or -2 to attack while in h2h
   terrain: "Cavern, Ruins",
 };
+
+export const humanoids = [Berserker, Kobold, Orc, Troglodyte];

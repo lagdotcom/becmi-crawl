@@ -1,4 +1,5 @@
 export interface EngineEvents {
+  error: { value: string };
   listItem: { value: string };
   paragraph: { value: string };
   choices: { value: string[] };

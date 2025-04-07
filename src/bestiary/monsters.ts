@@ -1,6 +1,6 @@
 import { MonsterStats } from "../types";
 
-export const Actaeon: MonsterStats = {
+const Actaeon: MonsterStats = {
   name: "actaeon",
   ac: 3,
   hd: 11,
@@ -22,3 +22,5 @@ export const Actaeon: MonsterStats = {
   terrain: "Woods",
   load: [3000, 6000],
 };
+
+export const monsters = [Actaeon];

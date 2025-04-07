@@ -31,6 +31,9 @@ const LogItem = memo(function LogItem({ item }: { item: DisplayItem }) {
 
     case "paragraph":
       return <p>{item.value}</p>;
+
+    case "error":
+      return <p className={styles.error}>{item.value}</p>;
   }
 });
 
@@ -43,6 +46,7 @@ export default function GameDisplay({ moduleId }: GameDisplayProps) {
   const [menuOptions, setMenuOptions] = useState<string[]>();
   const [display, df] = useReducer(displayReducer, []);
 
+  useEngineEvent("error", ({ value }) => df({ type: "error", value }), [df]);
   useEngineEvent("listItem", ({ value }) => df({ type: "item", value }), [df]);
   useEngineEvent("paragraph", ({ value }) => df({ type: "paragraph", value }), [
     df,

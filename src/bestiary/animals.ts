@@ -1,7 +1,7 @@
 import { mkDice as d } from "../tools";
 import { MonsterStats } from "../types";
 
-export const GiantRat: MonsterStats = {
+const GiantRat: MonsterStats = {
   name: "giant rat",
   ac: 7,
   hd: 0.5,
@@ -22,3 +22,5 @@ export const GiantRat: MonsterStats = {
   // TODO might have disease [6xp if true]: 1/20 chance of disease, save vs. poison or (1 in 4, die in 1d6 days / sick for 1mo unable to adventure)
   terrain: "Cavern, Ruins",
 };
+
+export const animals = [GiantRat];

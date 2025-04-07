@@ -18,6 +18,7 @@ VAR PARTY_SIZE = 6
 VAR TURN_TIMER = 0
 
 === function new_turn
+    @@TIME(turn=1)
     ~ TURN_TIMER += 1
     { TURN_TIMER % 3 == 0:
         ~ return check_random_encounter()
@@ -87,16 +88,15 @@ The opening leads straight into the rock formation, with a 10′ wide corridor l
         -> a1corridor
 
 === random_encounter ===
-TODO encounter
-RANDOM ENCOUNTER ROLLED BUT NOT IMPLEMENTED YET: <>
 { RANDOM(1, 6):
-- 1: {RANDOM(1, 4)} orc(s).
-- 2: {RANDOM(1, 2)} giant centipede(s).
-- 3: {RANDOM(1, 6)} kobold(s).
-- 4: {RANDOM(1, 2)} troglodyte(s).
-- 5: {RANDOM(1, 4) + 1} giant rats.
-- 6: {RANDOM(1, 2)} berserker(s).
+- 1: @@ENEMY(type="orc" count={RANDOM(1, 4)} hp=[6,4,3,1] mv=90 ml=8)
+- 2: @@ENEMY(type="giant centipede" count={RANDOM(1, 2)} hp=[2,2])
+- 3: @@ENEMY(type="kobold" count={RANDOM(1, 6)} hp=[4,3,3,2,2,1])
+- 4: @@ENEMY(type="troglodyte" count={RANDOM(1, 2)} hp=[6,5])
+- 5: @@ENEMY(type="giant rat" count={RANDOM(1, 4) + 1} hp=[4,3,2,1,1])
+- 6: @@ENEMY(type="berserker" count={RANDOM(1, 2)} hp=[5,4] mv=90)
 }
+@@COMBAT()
 ->->
 
 === a1corridor ===
@@ -129,7 +129,7 @@ You are in a long, 10′ wide corridor with three sets of small alcoves. At one 
     Then both mouths shout in unison, "WOE TO AN WHO PASS THIS PLACE - THE WRATH OF ZELLIGAR AND ROGAHN WILL BE UPON THEM!"
     The mouths then begin laughing raucously, fading in intensity as they slowly disappear from view.
     {check_random_encounter():
-        You hear footsteps approaching rapidly; the voices have attracted trouble!
+        You hear something approaching rapidly; the voices have attracted trouble!
         -> random_encounter -> menu
     }
     -> destination
@@ -141,6 +141,10 @@ At the top of the short staircase is a four-way intersection and a grisly scene;
 {new_turn(): -> random_encounter -> menu}
 -> menu
 
+= rummage_encounter
+Your rummaging seems to have attracted some attention...
+-> random_encounter -> menu
+
 = menu
     + (body1) Look at the first body.
         You see a human fighter, slumped against a wall. Their broken sword, sheared off about eight inches above the pommel, tells the story of their demise. They wear no armour.
@@ -148,7 +152,7 @@ At the top of the short staircase is a four-way intersection and a grisly scene;
     * {body1} Examine the first body more closely.
         There are no items of any value on the remains, other than a belt pouch containing 5 g.p.
         TODO give pouch w/ 5gp
-        {new_turn(): -> random_encounter -> menu}
+        {new_turn(): -> rummage_encounter}
 
     + (body2) Look at the second body.
         You see a human magic-user, {body2sword:
@@ -162,21 +166,21 @@ At the top of the short staircase is a four-way intersection and a grisly scene;
     * (body2x) {body2} Examine the second body more closely.
         The body is bereft of any items of great value. The robe is bloodstained and ruined, but there is a pocket with a small purse containing 2 g.p. and a pouch full of garlic buds.
         TODO give purse w/ 2gp, pouch w/ garlic buds
-        {new_turn(): -> random_encounter -> menu}
+        {new_turn(): -> rummage_encounter}
 
     + (body3) Look at the third body.
         You see a dwarf fighter, face down in the corridor just east of the intersection. In their right hand they still clutch their war hammer. It appears that they crawled, wounded, to this point, since a trail of dried blood leads around the corner. An inside-out sack lies alongside the body, now empty.
 
     * (body3x) {body3} Examine the third body more closely.
         The body has been stripped of armour, though they still wear a helm. Unfortunately, it has a noticeable dent that renders it worthless. There are no items of value on the remains.
-        {new_turn(): -> random_encounter -> menu}
+        {new_turn(): -> rummage_encounter}
 
     + (body4) Look at the fourth body.
         You see a human fighter lying sprawled on the floor, a broken shield nearby. The body has no armour or weapon nearby.
 
     * (body4x) {body4} Examine the fourth body more closely.
         The body seems to be that of a guard who defended to the death. There are no items of value on the remains.
-        {new_turn(): -> random_encounter -> menu}
+        {new_turn(): -> rummage_encounter}
 
     + (body5) Look at the fifth body.
         You see a human fighter on the floor, face down. Their head has been bashed in by some large bludgeoning weapon. There is no armour or weapon on the body{not body5dagger:, except for a dagger sheathed in their belt}.
