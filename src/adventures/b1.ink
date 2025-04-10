@@ -149,7 +149,7 @@ Your rummaging seems to have attracted some attention...
     + (body1) Look at the first body.
         You see a human fighter, slumped against a wall. Their broken sword, sheared off about eight inches above the pommel, tells the story of their demise. They wear no armour.
 
-    * {body1} Examine the first body more closely.
+    * {body1} Examine the first body more closely. # turn
         There are no items of any value on the remains, other than a belt pouch containing 5 g.p.
         TODO give pouch w/ 5gp
         {new_turn(): -> rummage_encounter}
@@ -163,7 +163,7 @@ Your rummaging seems to have attracted some attention...
     * (body2sword) {body2} Remove the sword from the second body.
         The body crumples to the floor. The sword itself is damaged and seems of low quality.
 
-    * (body2x) {body2} Examine the second body more closely.
+    * (body2x) {body2} Examine the second body more closely. # turn
         The body is bereft of any items of great value. The robe is bloodstained and ruined, but there is a pocket with a small purse containing 2 g.p. and a pouch full of garlic buds.
         TODO give purse w/ 2gp, pouch w/ garlic buds
         {new_turn(): -> rummage_encounter}
@@ -171,14 +171,14 @@ Your rummaging seems to have attracted some attention...
     + (body3) Look at the third body.
         You see a dwarf fighter, face down in the corridor just east of the intersection. In their right hand they still clutch their war hammer. It appears that they crawled, wounded, to this point, since a trail of dried blood leads around the corner. An inside-out sack lies alongside the body, now empty.
 
-    * (body3x) {body3} Examine the third body more closely.
+    * (body3x) {body3} Examine the third body more closely. # turn
         The body has been stripped of armour, though they still wear a helm. Unfortunately, it has a noticeable dent that renders it worthless. There are no items of value on the remains.
         {new_turn(): -> rummage_encounter}
 
     + (body4) Look at the fourth body.
         You see a human fighter lying sprawled on the floor, a broken shield nearby. The body has no armour or weapon nearby.
 
-    * (body4x) {body4} Examine the fourth body more closely.
+    * (body4x) {body4} Examine the fourth body more closely. # turn
         The body seems to be that of a guard who defended to the death. There are no items of value on the remains.
         {new_turn(): -> rummage_encounter}
 
@@ -189,9 +189,9 @@ Your rummaging seems to have attracted some attention...
         You take the dagger.
         TODO give dagger
 
-    + Move into the corridor to the north.
-    + Move into the corridor to the west.
-    + Move into the corridor to the east.
-    + Move into the corridor to the south.
+    + Move into the corridor to the north. # turn
+    + Move into the corridor to the west. # turn
+    + Move into the corridor to the east. # turn
+    + Move into the corridor to the south. # turn
 
 - -> menu

@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 
+import { TaggedText } from "../../engine/events";
 import { useEngineEvent, useLibrary } from "../../hooks/LibraryProvider";
 import { selectCharacterIds, selectModuleById } from "../../state/selectors";
 import { useAppSelector } from "../../state/store";
@@ -24,18 +25,33 @@ const LogItem = memo(function LogItem({ item }: { item: DisplayItem }) {
       return (
         <ul>
           {item.items.map((ti, i) => (
-            <li key={i}>{ti.value}</li>
+            <li key={i}>{ti.text}</li>
           ))}
         </ul>
       );
 
     case "paragraph":
-      return <p>{item.value}</p>;
+      return <p>{item.text}</p>;
 
     case "error":
-      return <p className={styles.error}>{item.value}</p>;
+      return <p className={styles.error}>{item.text}</p>;
   }
 });
+
+function GameChoice({
+  choice,
+  onClick,
+}: {
+  choice: TaggedText;
+  onClick: () => void;
+}) {
+  return (
+    <li>
+      <button onClick={onClick}>{choice.text}</button>
+      {choice.tags.includes("turn") && <span> this will take a turn</span>}
+    </li>
+  );
+}
 
 export default function GameDisplay({ moduleId }: GameDisplayProps) {
   const lib = useLibrary();
@@ -43,7 +59,7 @@ export default function GameDisplay({ moduleId }: GameDisplayProps) {
   const allChars = useAppSelector(selectCharacterIds);
 
   const mainRef = useRef<HTMLElement>(null);
-  const [menuOptions, setMenuOptions] = useState<string[]>();
+  const [menuOptions, setMenuOptions] = useState<TaggedText[]>();
   const [display, df] = useReducer(displayReducer, []);
 
   useEngineEvent("error", ({ value }) => df({ type: "error", value }), [df]);
@@ -51,7 +67,7 @@ export default function GameDisplay({ moduleId }: GameDisplayProps) {
   useEngineEvent("paragraph", ({ value }) => df({ type: "paragraph", value }), [
     df,
   ]);
-  useEngineEvent("choices", ({ value }) => setMenuOptions(value), [
+  useEngineEvent("choices", ({ values: value }) => setMenuOptions(value), [
     setMenuOptions,
   ]);
 
@@ -84,9 +100,7 @@ export default function GameDisplay({ moduleId }: GameDisplayProps) {
         {menuOptions && (
           <ul className={styles.options}>
             {menuOptions.map((value, i) => (
-              <li key={i}>
-                <button onClick={() => choose(i)}>{value}</button>
-              </li>
+              <GameChoice key={i} onClick={() => choose(i)} choice={value} />
             ))}
           </ul>
         )}

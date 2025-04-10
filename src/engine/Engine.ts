@@ -6,7 +6,12 @@ import { AppAction, AppStore } from "../state/store";
 import isDefined from "../tools/isDefined";
 import { ResourceURL } from "../types";
 import EngineChar from "./Char";
-import { EngineEventHandler, EngineEventName, EngineEvents } from "./events";
+import {
+  EngineEventHandler,
+  EngineEventName,
+  EngineEvents,
+  TaggedText,
+} from "./events";
 import Library from "./Library";
 import { dataDict, Dict } from "./parsing";
 
@@ -88,11 +93,17 @@ export default class Engine {
       const str = this.runCommands(raw);
 
       if (!str.trim()) continue;
-      if (str.startsWith("•")) this.listItem(str.slice(1).trim());
-      else this.paragraph(str.trim());
+      if (str.startsWith("•"))
+        this.listItem(str.slice(1).trim(), this.story.currentTags ?? []);
+      else this.paragraph(str.trim(), this.story.currentTags ?? []);
     }
 
-    this.choices(this.story.currentChoices.map((ch) => ch.text));
+    this.choices(
+      this.story.currentChoices.map((ch) => ({
+        text: ch.text,
+        tags: ch.tags ?? [],
+      })),
+    );
   }
 
   runCommands(line: string) {
@@ -169,14 +180,14 @@ export default class Engine {
     return items;
   }
 
-  listItem(value: string) {
-    this.fire("listItem", { value });
+  listItem(text: string, tags: string[] = []) {
+    this.fire("listItem", { value: { text, tags } });
   }
-  paragraph(value: string) {
-    this.fire("paragraph", { value });
+  paragraph(text: string, tags: string[] = []) {
+    this.fire("paragraph", { value: { text, tags } });
   }
-  choices(value: string[]) {
-    this.fire("choices", { value });
+  choices(values: TaggedText[]) {
+    this.fire("choices", { values });
   }
   error(value: string) {
     console.error(value);

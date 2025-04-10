@@ -1,18 +1,16 @@
-interface TextItem {
-  value: string;
-}
+import { TaggedText } from "../../engine/events";
 
 export type DisplayItem =
-  | ({ type: "error" } & TextItem)
-  | ({ type: "paragraph" } & TextItem)
-  | { type: "ul"; items: TextItem[] };
+  | { type: "error"; text: string }
+  | ({ type: "paragraph" } & TaggedText)
+  | { type: "ul"; items: TaggedText[] };
 
 type DisplayState = DisplayItem[];
 
 type DisplayAction =
   | { type: "error"; value: string }
-  | { type: "paragraph"; value: string }
-  | { type: "item"; value: string };
+  | { type: "paragraph"; value: TaggedText }
+  | { type: "item"; value: TaggedText };
 
 export default function displayReducer(
   items: DisplayState,
@@ -27,14 +25,14 @@ export default function displayReducer(
       if (top?.type === "ul")
         return exceptTop.concat({
           type: "ul",
-          items: top.items.concat({ value }),
+          items: top.items.concat(value),
         });
-      return items.concat({ type: "ul", items: [{ value }] });
+      return items.concat({ type: "ul", items: [value] });
 
     case "paragraph":
-      return items.concat({ type: "paragraph", value });
+      return items.concat({ type: "paragraph", ...value });
 
     case "error":
-      return items.concat({ type: "error", value });
+      return items.concat({ type: "error", text: value });
   }
 }
