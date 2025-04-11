@@ -15,6 +15,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
     "inkjs": "^2.3.1",
+    "nanoid": "^5.1.5",
     "react": "^19.0.0",
     "react-aria-components": "^1.6.0",
     "react-dom": "^19.0.0",

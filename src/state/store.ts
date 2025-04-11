@@ -2,10 +2,13 @@ import { configureStore, createSelector, Dispatch } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 
 import characters from "./characters";
+import enemies from "./enemies";
 import game from "./game";
 import modules from "./modules";
 
-export const store = configureStore({ reducer: { characters, game, modules } });
+export const store = configureStore({
+  reducer: { characters, enemies, game, modules },
+});
 export type AppStore = typeof store;
 export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];

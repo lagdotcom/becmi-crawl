@@ -132,8 +132,3 @@ export interface MonsterStats {
   bardingMultiplier?: number;
   rarity: "C" | "R" | "VR";
 }
-
-export type MonsterOverride = Partial<MonsterStats> & {
-  number?: number | Dice;
-  hp?: number[];
-};

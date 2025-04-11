@@ -6,6 +6,7 @@ import { AppAction, AppStore } from "../state/store";
 import isDefined from "../tools/isDefined";
 import { ResourceURL } from "../types";
 import EngineChar from "./Char";
+import CombatManager from "./CombatManager";
 import {
   EngineEventHandler,
   EngineEventName,
@@ -39,22 +40,23 @@ const inkCommandHandlers: Partial<Record<string, InkCommandHandler>> = {
     const data = bestiary[type];
     if (!data) return console.warn(`unknown enemy type: ${type}`);
 
-    // TODO
-    console.log(data, {
-      count,
-      hp: args.numArray("hp"),
-      mv: args.num("mv"),
-      ml: args.num("ml"),
+    const feetPerTurn = args.num("mv");
+
+    e.combat.addEnemies(data, count, args.numArray("hp"), {
+      mv: feetPerTurn ? [feetPerTurn, feetPerTurn / 3] : undefined,
+      morale: args.num("ml"),
     });
   },
 };
 
 export default class Engine {
+  combat: CombatManager;
   listeners: EngineListeners;
   story!: Story;
   turnCount: number;
 
   constructor(private store: AppStore) {
+    this.combat = new CombatManager(this);
     this.listeners = {
       error: new Set(),
       listItem: new Set(),

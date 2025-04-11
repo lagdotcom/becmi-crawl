@@ -1,4 +1,5 @@
 import { charactersAdapter, charactersSlice } from "./characters";
+import { enemiesAdapter, enemiesSlice } from "./enemies";
 import { gameSlice } from "./game";
 import { modulesAdapter, modulesSlice } from "./modules";
 import { createAppSelector } from "./store";
@@ -29,3 +30,7 @@ export const {
   selectAll: selectAllModules,
   selectTotal: selectTotalModules,
 } = modulesAdapter.getSelectors(modulesSlice.selectSlice);
+
+export const { selectAll: selectAllEnemies } = enemiesAdapter.getSelectors(
+  enemiesSlice.selectSlice,
+);
