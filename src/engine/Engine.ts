@@ -1,6 +1,6 @@
 import { Story } from "inkjs";
 
-import { bestiary } from "../bestiary";
+import { bestiary } from "../lib";
 import { selectParty } from "../state/selectors";
 import { AppAction, AppStore } from "../state/store";
 import isDefined from "../tools/isDefined";

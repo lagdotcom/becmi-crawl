@@ -8,12 +8,15 @@ export type AC = Flavour<number, "AC">;
 export type CharId = Flavour<string, "CharId">;
 export type ClassLevel = Flavour<number, "ClassLevel">;
 export type CoinWeight = Flavour<number, "CoinWeight">;
+export type DiceSize = Flavour<number, "DiceSize">;
+export type ExperiencePoints = Flavour<number, "ExperiencePoints">;
 export type Feet = Flavour<number, "Feet">;
 export type HitDice = Flavour<number, "HitDice">;
 export type ModuleId = Flavour<string, "ModuleId">;
 export type MonsterBaseName = Flavour<string, "MonsterBaseName">;
 export type MonsterId = Flavour<string, "MonsterId">;
 export type NodeId = Flavour<string, "NodeId">;
+export type Percentage = Flavour<number, "Percentage">;
 export type ResourceURL = Flavour<string, "ResourceURL">;
 
 export interface BECMILibrary {
@@ -45,22 +48,47 @@ export type CoinType = "pp" | "ep" | "gp" | "sp" | "cp";
 export interface CharData {
   id: CharId;
   name: string;
+  alignment: Alignment;
   characterClass: CharacterClass;
   level: number;
   abilities: Record<AbilityScore, number>;
-  ac: number;
+  // ac: number;
   hp: number;
   hpMax: number;
   money: Record<CoinType, number>;
-  xp: number;
+  xp: ExperiencePoints;
   // TODO equipment
 }
 
 export interface BECMIChar extends CharData {}
 
+export type ThresholdTable<T, D> = [T, D][];
+
+export interface CharacterClassData {
+  name: CharacterClass;
+  primeRequisite: AbilityScore[];
+  abilityRequirements?: Partial<Record<AbilityScore, number>>;
+  alignmentRequirement?: Alignment[];
+  hitDiceSize: DiceSize;
+  hpPerLevelFrom10: number;
+  maximumLevel: ClassLevel;
+  experience: ExperiencePoints[];
+  savesTable: ThresholdTable<
+    ClassLevel,
+    [
+      deathRayPoison: number,
+      magicWands: number,
+      paralysisTurnToStone: number,
+      breathAttack: number,
+      rodStaffSpell: number,
+    ]
+  >;
+  attackRanks?: ThresholdTable<ExperiencePoints, AttackRank>;
+}
+
 export type Dice = [
   count: number,
-  size: number,
+  size: DiceSize,
   bonus: number,
   multiplier: number,
 ];
@@ -111,6 +139,12 @@ export type TreasureType =
   | "U"
   | "V";
 
+export interface MonsterAttack {
+  name: string;
+  damage: [type: "weapon", bonus: number, multiplier: number] | Dice;
+  extra?: unknown;
+}
+
 export interface MonsterStats {
   name: string;
   ac: AC;
@@ -119,6 +153,7 @@ export interface MonsterStats {
   hdAsterisks?: number;
   size: "S" | "M" | "L";
   mv: [feetPerTurn: Feet, feetPerRound: Feet];
+  attacks: MonsterAttack[];
   numberAppearing: [dungeon: number | Dice, wilderness: number | Dice];
   save: "NM" | [as: "C" | "F" | "M" | "T" | "D" | "E" | "H", level: ClassLevel];
   morale: number;
@@ -132,3 +167,28 @@ export interface MonsterStats {
   bardingMultiplier?: number;
   rarity: "C" | "R" | "VR";
 }
+
+export enum ArmorType {
+  none = 9,
+  leather = 7,
+  scale = 6,
+  chain = 5,
+  banded = 4,
+  plate = 3,
+  suit = 0,
+}
+
+export type AttackRank =
+  | "A"
+  | "B"
+  | "C"
+  | "D"
+  | "E"
+  | "F"
+  | "G"
+  | "H"
+  | "I"
+  | "J"
+  | "K"
+  | "L"
+  | "M";

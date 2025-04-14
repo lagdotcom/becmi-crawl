@@ -1,4 +1,5 @@
-import { MonsterStats } from "../types";
+import { mkDice as d } from "../../tools";
+import { MonsterStats } from "../../types";
 
 const Actaeon: MonsterStats = {
   name: "actaeon",
@@ -8,6 +9,11 @@ const Actaeon: MonsterStats = {
   size: "L",
   mv: [150, 50],
   // TODO attacks: 2 spears (1d6+6), 1 antler (2d8) or breath (special)
+  attacks: [
+    { name: "weapon", damage: ["weapon", 6, 1] },
+    { name: "weapon", damage: ["weapon", 6, 1] },
+    { name: "antler", damage: d(2, 8) },
+  ],
   numberAppearing: [0, 1],
   save: ["C", 11],
   morale: 10,

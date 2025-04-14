@@ -1,5 +1,5 @@
-import { mkDice as d } from "../tools";
-import { MonsterStats } from "../types";
+import { mkDice as d } from "../../tools";
+import { MonsterStats } from "../../types";
 
 const Berserker: MonsterStats = {
   name: "berserker",
@@ -9,7 +9,7 @@ const Berserker: MonsterStats = {
   hdAsterisks: 1,
   size: "M",
   mv: [120, 40],
-  // attacks: 1 (by weapon)
+  attacks: [{ name: "weapon", damage: ["weapon", 0, 1] }],
   numberAppearing: [d(1, 6), d(3, 10)],
   save: ["F", 1],
   morale: 12,
@@ -29,7 +29,7 @@ const Kobold: MonsterStats = {
   hd: 0.5,
   size: "S",
   mv: [90, 30],
-  // attacks: 1 (by weapon -1)
+  attacks: [{ name: "weapon", damage: ["weapon", -1, 1] }],
   numberAppearing: [d(4, 4), d(1, 6, 0, 10)],
   save: "NM",
   morale: 6,
@@ -51,7 +51,7 @@ const Orc: MonsterStats = {
   hd: 1,
   size: "M",
   mv: [120, 40],
-  // attacks: 1 (by weapon)
+  attacks: [{ name: "weapon", damage: ["weapon", 0, 1] }],
   numberAppearing: [d(2, 4), d(1, 6, 0, 10)],
   save: ["F", 1],
   morale: 6,
@@ -73,7 +73,11 @@ const Troglodyte: MonsterStats = {
   hdAsterisks: 1,
   size: "L",
   mv: [120, 40],
-  // attacks: 2 claws (1d4), 1 bite (1d4)
+  attacks: [
+    { name: "claw", damage: d(1, 4) },
+    { name: "claw", damage: d(1, 4) },
+    { name: "bite", damage: d(1, 4) },
+  ],
   numberAppearing: [d(1, 8), d(5, 8)],
   save: ["F", 2],
   morale: 9,

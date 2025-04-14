@@ -15,7 +15,11 @@ export default class CombatManager {
   ) {
     for (let i = 0; i < count; i++) {
       const id = nanoid();
-      const hp = hpCounts[i] ?? this.engine.dice(data.hd, 8, data.hdBonus);
+      const hp =
+        hpCounts[i] ??
+        (data.hd === 0.5
+          ? this.engine.dice(1, 4, data.hdBonus)
+          : this.engine.dice(data.hd, 8, data.hdBonus));
 
       this.engine.dispatch(
         addEnemy({

@@ -27,6 +27,7 @@ VAR TURN_TIMER = 0
     }
 
 === function check_random_encounter
+    // ~ return true
     ~ return RANDOM(1, 6) == 6
 
 === intro ===

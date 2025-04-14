@@ -1,5 +1,5 @@
-import { mkDice as d } from "../tools";
-import { MonsterStats } from "../types";
+import { mkDice as d } from "../../tools";
+import { MonsterStats } from "../../types";
 
 const GiantRat: MonsterStats = {
   name: "giant rat",
@@ -8,7 +8,7 @@ const GiantRat: MonsterStats = {
   size: "S",
   mv: [120, 40],
   // TODO swimming: [60, 20],
-  // TODO attacks: 1 bite (1d3 + disease)
+  attacks: [{ name: "bite", damage: d(1, 3), extra: "disease" }],
   numberAppearing: [d(3, 6), d(3, 10)],
   save: "NM",
   morale: 8,
