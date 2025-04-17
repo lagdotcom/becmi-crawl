@@ -1,13 +1,12 @@
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 
-import { generateParty } from "../data/sampleCharacters";
 import { CharData } from "../types";
 
 export const charactersAdapter = createEntityAdapter<CharData>();
 
 export const charactersSlice = createSlice({
   name: "characters",
-  initialState: charactersAdapter.getInitialState(undefined, generateParty(6)),
+  initialState: charactersAdapter.getInitialState(),
   reducers: {
     addCharacter: charactersAdapter.addOne,
   },

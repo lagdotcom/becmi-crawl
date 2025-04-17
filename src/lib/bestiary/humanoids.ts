@@ -1,7 +1,7 @@
 import { mkDice as d } from "../../tools";
-import { MonsterStats } from "../../types";
+import { EnemyStats } from "../../types";
 
-const Berserker: MonsterStats = {
+const Berserker: EnemyStats = {
   name: "berserker",
   ac: 7,
   hd: 1,
@@ -23,7 +23,7 @@ const Berserker: MonsterStats = {
   terrain: "Any",
 };
 
-const Kobold: MonsterStats = {
+const Kobold: EnemyStats = {
   name: "kobold",
   ac: 7,
   hd: 0.5,
@@ -45,7 +45,7 @@ const Kobold: MonsterStats = {
   terrain: "Cavern, Hill, Mountain, Wood",
 };
 
-const Orc: MonsterStats = {
+const Orc: EnemyStats = {
   name: "orc",
   ac: 6,
   hd: 1,
@@ -66,7 +66,7 @@ const Orc: MonsterStats = {
   terrain: "Wilderness (any)",
 };
 
-const Troglodyte: MonsterStats = {
+const Troglodyte: EnemyStats = {
   name: "troglodyte",
   ac: 5,
   hd: 2,

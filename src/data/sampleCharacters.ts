@@ -1,6 +1,9 @@
-import { getAdjustment, pcClassData } from "../lib";
+import { nanoid } from "nanoid";
+
+import { getAdjustment, pcClassData, weaponLibrary } from "../lib";
+import { Item } from "../state/items";
 import { randomPick, rollHD } from "../tools";
-import { BECMIChar, CharacterClass, CharData } from "../types";
+import { BECMIChar, CharacterClass, CharData, CharId } from "../types";
 
 type SamplePC = Pick<CharData, "name" | "characterClass" | "abilities">;
 
@@ -55,6 +58,16 @@ const clerics = [
   mkSample("Cleric", "Eggo", "of the Holy Brotherhood", 7, 10, 13, 8, 9, 11),
 ];
 
+const clericWeapons = ["club", "war hammer", "mace"];
+const clericArmor = [
+  {},
+  { armor: "leather armor" },
+  { armor: "leather armor" },
+  { armor: "leather armor", shield: "shield" },
+  { armor: "chain mail" },
+  { armor: "chain mail", shield: "shield" },
+];
+
 const fighters = [
   mkSample("Fighter", "Brandon", "", 14, 8, 11, 13, 9, 12),
   mkSample("Fighter", "Evro", "", 14, 13, 7, 12, 11, 9),
@@ -67,6 +80,36 @@ const fighters = [
   mkSample("Halfling", "Lefto", "", 11, 10, 11, 18, 8, 10),
   mkSample("Fighter", "Webberan", "of the Great North", 16, 10, 13, 10, 7, 7),
   mkSample("Halfling", "Sho-Rembo", "", 9, 11, 9, 18, 9, 15),
+];
+
+const fighterWeapons = [
+  ["hand axe", "dagger"],
+  ["normal sword", "dagger"],
+  ["battle axe"],
+  ["mace"],
+  ["normal sword"],
+  ["normal sword"],
+  ["bastard sword"],
+  ["two-handed sword"],
+  ["halberd"],
+  ["poleaxe"],
+  ["pike"],
+  ["short bow"],
+];
+
+const fighterArmor = [
+  { armor: "leather armor" },
+  { armor: "leather armor", shield: "shield" },
+  { armor: "scale mail" },
+  { armor: "scale mail" },
+  { armor: "scale mail", shield: "shield" },
+  { armor: "scale mail", shield: "shield" },
+  { armor: "chain mail" },
+  { armor: "chain mail" },
+  { armor: "chain mail", shield: "shield" },
+  { armor: "chain mail", shield: "shield" },
+  { armor: "banded mail" },
+  { armor: "banded mail", shield: "shield" },
 ];
 
 const magicUsers = [
@@ -83,6 +126,8 @@ const magicUsers = [
   mkSample("Elf", "Lappoy", "the Unexpected", 11, 14, 9, 10, 7, 9),
   mkSample("Magic User", "Surfal", "", 12, 14, 11, 8, 12, 5),
 ];
+
+const magicUserWeapons = ["staff", "dagger"];
 
 const thieves = [
   mkSample("Thief", "Luven", "Lightfinger", 13, 14, 9, 12, 16, 13),
@@ -111,7 +156,7 @@ const classes = [
   "Magic User",
 ] as const;
 
-function instantiate(sample: SamplePC): BECMIChar {
+function makePC(sample: SamplePC): BECMIChar {
   const cd = pcClassData[sample.characterClass];
   const hp = rollHD(cd.hitDiceSize, getAdjustment(sample.abilities.con));
 
@@ -128,43 +173,96 @@ function instantiate(sample: SamplePC): BECMIChar {
   };
 }
 
+function makeItem(
+  pc: CharId,
+  base: string,
+  type: "armor" | "shield" | "weapon",
+  equipped = true,
+  qty = 1,
+): Item {
+  return {
+    base,
+    id: `${base}_${nanoid()}`,
+    type,
+    overrides: {},
+    location: "pc",
+    who: pc,
+    equipped,
+    identified: true,
+    qty,
+  };
+}
+
 function getRandomPC() {
+  const inventory: Item[] = [];
+
   switch (randomPick(classes)) {
     case "Fighter": {
-      const pc = instantiate(randomPick(fighters));
-      // TODO random equipment
-      return pc;
+      const pc = makePC(randomPick(fighters));
+
+      let uses2h = false;
+      const weapons = randomPick(fighterWeapons);
+      for (const name of weapons) {
+        inventory.push(
+          makeItem(pc.id, name, "weapon", inventory.length === 0, 1),
+        );
+
+        const stats = weaponLibrary[name];
+        if (stats.th) uses2h = true;
+      }
+
+      const { armor, shield } = randomPick(fighterArmor);
+      if (armor) inventory.push(makeItem(pc.id, armor, "armor"));
+      if (shield && !uses2h) inventory.push(makeItem(pc.id, shield, "shield"));
+
+      return { pc, inventory };
     }
 
     case "Cleric": {
-      const pc = instantiate(randomPick(clerics));
-      // TODO random equipment
-      return pc;
+      const pc = makePC(randomPick(clerics));
+
+      const weapon = randomPick(clericWeapons);
+      inventory.push(makeItem(pc.id, weapon, "weapon"));
+
+      const { armor, shield } = randomPick(clericArmor);
+      if (armor) inventory.push(makeItem(pc.id, armor, "armor"));
+      if (shield) inventory.push(makeItem(pc.id, shield, "shield"));
+
+      return { pc, inventory };
     }
 
     case "Magic User": {
-      const pc = instantiate(randomPick(magicUsers));
-      // TODO random equipment, spells
-      return pc;
+      const pc = makePC(randomPick(magicUsers));
+
+      const weapon = randomPick(magicUserWeapons);
+      inventory.push(makeItem(pc.id, weapon, "weapon"));
+
+      // TODO random spells
+      return { pc, inventory };
     }
 
     case "Thief": {
-      const pc = instantiate(randomPick(thieves));
-      // TODO random equipment
-      return pc;
+      const pc = makePC(randomPick(thieves));
+
+      inventory.push(makeItem(pc.id, "dagger", "weapon"));
+      inventory.push(makeItem(pc.id, "leather armor", "armor"));
+
+      return { pc, inventory };
     }
   }
 }
 
 export function generateParty(size: number) {
   const party: CharData[] = [];
+  const items: Item[] = [];
 
   while (party.length < size) {
-    const pc = getRandomPC();
+    const { pc, inventory } = getRandomPC();
     if (party.find((o) => o.name === pc.name)) continue;
 
     party.push(pc);
+    items.push(...inventory);
   }
 
-  return party;
+  return { party, items };
 }

@@ -9,9 +9,11 @@ export type CharId = Flavour<string, "CharId">;
 export type ClassLevel = Flavour<number, "ClassLevel">;
 export type CoinWeight = Flavour<number, "CoinWeight">;
 export type DiceSize = Flavour<number, "DiceSize">;
+export type EnemyId = Flavour<string, "EnemyId">;
 export type ExperiencePoints = Flavour<number, "ExperiencePoints">;
 export type Feet = Flavour<number, "Feet">;
 export type HitDice = Flavour<number, "HitDice">;
+export type ItemId = Flavour<string, "ItemId">;
 export type ModuleId = Flavour<string, "ModuleId">;
 export type MonsterBaseName = Flavour<string, "MonsterBaseName">;
 export type MonsterId = Flavour<string, "MonsterId">;
@@ -45,6 +47,8 @@ export type CharacterClass =
   | "Halfling";
 export type CoinType = "pp" | "ep" | "gp" | "sp" | "cp";
 
+export type Money = Record<CoinType, number>;
+
 export interface CharData {
   id: CharId;
   name: string;
@@ -52,12 +56,10 @@ export interface CharData {
   characterClass: CharacterClass;
   level: number;
   abilities: Record<AbilityScore, number>;
-  // ac: number;
   hp: number;
   hpMax: number;
-  money: Record<CoinType, number>;
+  money: Money;
   xp: ExperiencePoints;
-  // TODO equipment
 }
 
 export interface BECMIChar extends CharData {}
@@ -95,7 +97,7 @@ export type Dice = [
 
 export type Alignment = "L" | "N" | "C";
 
-export type MonsterType =
+export type EnemyType =
   | "Normal Animal"
   | "Giant Animal"
   | "Lowlife"
@@ -139,21 +141,23 @@ export type TreasureType =
   | "U"
   | "V";
 
-export interface MonsterAttack {
+export interface EnemyAttack {
   name: string;
   damage: [type: "weapon", bonus: number, multiplier: number] | Dice;
   extra?: unknown;
 }
 
-export interface MonsterStats {
+export type Size = "S" | "M" | "L";
+
+export interface EnemyStats {
   name: string;
   ac: AC;
   hd: HitDice;
   hdBonus?: number;
   hdAsterisks?: number;
-  size: "S" | "M" | "L";
+  size: Size;
   mv: [feetPerTurn: Feet, feetPerRound: Feet];
-  attacks: MonsterAttack[];
+  attacks: EnemyAttack[];
   numberAppearing: [dungeon: number | Dice, wilderness: number | Dice];
   save: "NM" | [as: "C" | "F" | "M" | "T" | "D" | "E" | "H", level: ClassLevel];
   morale: number;
@@ -161,11 +165,22 @@ export interface MonsterStats {
   intelligence: number;
   alignment: Alignment;
   xp: number;
-  type: MonsterType | MonsterType[];
+  type: EnemyType | EnemyType[];
   terrain: string;
   load?: [fullSpeed: CoinWeight, halfSpeed: CoinWeight];
   bardingMultiplier?: number;
   rarity: "C" | "R" | "VR";
+
+  onCreate?: (me: EnemyData) => void;
+}
+type EnemyOverrides = Partial<Omit<EnemyStats, "onCreate">>;
+
+export interface EnemyData {
+  id: EnemyId;
+  base: string;
+  hpMax: number;
+  hp: number;
+  overrides: EnemyOverrides;
 }
 
 export enum ArmorType {
@@ -192,3 +207,64 @@ export type AttackRank =
   | "K"
   | "L"
   | "M";
+
+interface ItemBase {
+  name: string;
+  value: Partial<Money>;
+  weight: CoinWeight;
+}
+
+export interface ArmorItem extends ItemBase {
+  ac: number;
+  druid?: boolean;
+  thief?: boolean;
+  s?: string;
+}
+export type ArmorOverrides = Partial<ArmorItem>;
+
+export interface ShieldItem extends ItemBase {
+  acBonus: number;
+  druid?: boolean;
+  thief?: boolean;
+}
+export type ShieldOverrides = Partial<ShieldItem>;
+
+export type Ranges = [short: Feet, medium: Feet, long: Feet];
+
+export interface WeaponItem extends ItemBase {
+  type:
+    | "axe"
+    | "bow"
+    | "bludgeon"
+    | "dagger"
+    | "pole"
+    | "shield"
+    | "sword"
+    | "other";
+  damage?: Dice;
+  size: Size;
+  a?: readonly [ammoItem: string, count: number];
+  c?: boolean;
+  m?: Ranges;
+  r?: boolean;
+  s?: string; // TODO
+  t?: Ranges;
+  v?: boolean;
+  w?: boolean;
+  hh?: Dice;
+  th?: boolean;
+}
+// note meanings:
+//   a: one load of ammo is included in weight
+//      bow = 20 arrows, crossbow = 30 quarrels, sling = 30 stones, blowgun = 5 darts
+//      arrow = 1/2cn, quarrel = 1/3cn, stone = 1/5cn, dart = 1/5cn
+//   c: ok for clerics/druids (if natural)
+//   m: missile only
+//   r: thrown, but rarely, only Expert+ can do this
+//   s: special features!!!
+//   t: hand weapon, can be thrown
+//   v: can be set vs. a charge
+//   w: magic-users may use this if DM says so
+//   hh: can be 1- or 2-handed, does not cause loss of initiative etc.
+//   th: only 2-handed. no shield, always lose individual initiative. halfling/small cannot use.
+export type WeaponOverrides = Partial<WeaponItem>;

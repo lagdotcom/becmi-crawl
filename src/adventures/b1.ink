@@ -89,6 +89,7 @@ The opening leads straight into the rock formation, with a 10′ wide corridor l
         -> a1corridor
 
 === random_encounter ===
+@@CLEAR_ENEMIES()
 { RANDOM(1, 6):
 - 1: @@ENEMY(type="orc" count={RANDOM(1, 4)} hp=[6,4,3,1] mv=90 ml=8)
 - 2: @@ENEMY(type="giant centipede" count={RANDOM(1, 2)} hp=[2,2])

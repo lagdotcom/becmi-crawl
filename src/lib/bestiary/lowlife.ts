@@ -1,7 +1,7 @@
 import { mkDice as d } from "../../tools";
-import { MonsterStats } from "../../types";
+import { EnemyStats } from "../../types";
 
-const GiantCentipede: MonsterStats = {
+const GiantCentipede: EnemyStats = {
   name: "giant centipede",
   ac: 9,
   hd: 0.5,

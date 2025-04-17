@@ -6,8 +6,8 @@ import {
   CharacterClass,
   CharacterClassData,
   ClassLevel,
+  EnemyStats,
   HitDice,
-  MonsterStats,
   Percentage,
   ThresholdTable,
 } from "../types";
@@ -28,6 +28,8 @@ import {
   thac0 as normalManThac0,
 } from "./characters/normalMan";
 import { Thief } from "./characters/thief";
+import { armor, shields } from "./equipment/armor";
+import { weapons } from "./equipment/weapons";
 
 export const bestiary = Object.fromEntries(
   [...animals, ...humanoids, ...lowlife, ...monsters].map((s) => [s.name, s]),
@@ -45,6 +47,16 @@ export const pcClassData: Record<CharacterClass, CharacterClassData> = {
   Thief,
 };
 
+export const armorLibrary = Object.fromEntries(armor.map((i) => [i.name, i]));
+
+export const shieldLibrary = Object.fromEntries(
+  shields.map((i) => [i.name, i]),
+);
+
+export const weaponLibrary = Object.fromEntries(
+  weapons.map((i) => [i.name, i]),
+);
+
 export function getPCSaves(pc: BECMIChar) {
   return getByThreshold(pc.level, pcClassData[pc.characterClass].savesTable);
 }
@@ -58,7 +70,7 @@ const pcClassByShortCode: Record<string, CharacterClass> = {
   E: "Elf",
   H: "Halfling",
 };
-export function getMonsterSaves(m: MonsterStats["save"]) {
+export function getMonsterSaves(m: EnemyStats["save"]) {
   if (m === "NM") return normalManSaves;
 
   const [as, level] = m;
@@ -342,6 +354,6 @@ export function getAttackRollByHD(
   return calculateHitRoll(getByThresholdLE(hitDice, monsterThac0), targetAC);
 }
 
-export function getMonsterAttackRoll(m: MonsterStats, targetAC: number) {
+export function getEnemyAttackRoll(m: EnemyStats, targetAC: number) {
   return getAttackRollByHD(m.hd, m.hdBonus ?? 0, targetAC);
 }

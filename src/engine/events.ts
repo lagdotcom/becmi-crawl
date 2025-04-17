@@ -8,6 +8,7 @@ export interface EngineEvents {
   listItem: { value: TaggedText };
   paragraph: { value: TaggedText };
   choices: { values: TaggedText[] };
+  initiative: { party: number; npc: number };
 }
 export type EngineEventName = keyof EngineEvents;
 export type EngineEventHandler<E extends EngineEventName> = (

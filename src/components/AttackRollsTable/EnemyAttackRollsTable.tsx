@@ -15,10 +15,7 @@ interface Props {
   max?: number;
 }
 
-export default function MonsterAttackRollsTable({
-  min = -20,
-  max = 19,
-}: Props) {
+export default function EnemyAttackRollsTable({ min = -20, max = 19 }: Props) {
   const acs = useMemo(() => {
     const items = [];
     for (let i = max; i >= min; i--) items.push(i);

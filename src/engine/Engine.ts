@@ -1,6 +1,9 @@
 import { Story } from "inkjs";
 
+import { generateParty } from "../data/sampleCharacters";
 import { bestiary } from "../lib";
+import { addCharacter } from "../state/characters";
+import { addItem } from "../state/items";
 import { selectParty } from "../state/selectors";
 import { AppAction, AppStore } from "../state/store";
 import isDefined from "../tools/isDefined";
@@ -29,6 +32,10 @@ const inkCommandHandlers: Partial<Record<string, InkCommandHandler>> = {
 
     e.turnCount += turn;
     console.log(`it is now turn ${e.turnCount}`);
+  },
+
+  CLEAR_ENEMIES(e: Engine) {
+    e.combat.clearEnemies();
   },
 
   ENEMY(e: Engine, args: Dict) {
@@ -62,6 +69,7 @@ export default class Engine {
       listItem: new Set(),
       paragraph: new Set(),
       choices: new Set(),
+      initiative: new Set(),
     };
     this.turnCount = NaN;
   }
@@ -194,6 +202,13 @@ export default class Engine {
   error(value: string) {
     console.error(value);
     this.fire("error", { value });
+  }
+
+  createRandomParty(size = 6) {
+    const { party, items } = generateParty(size);
+
+    for (const pc of party) this.dispatch(addCharacter(pc));
+    for (const item of items) this.dispatch(addItem(item));
   }
 }
 

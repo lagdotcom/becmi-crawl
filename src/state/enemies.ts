@@ -1,14 +1,6 @@
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 
-import { MonsterStats } from "../types";
-
-export interface EnemyData {
-  id: string;
-  type: string;
-  hpMax: number;
-  hp: number;
-  overrides: Partial<MonsterStats>;
-}
+import { EnemyData } from "../types";
 
 export const enemiesAdapter = createEntityAdapter<EnemyData>();
 
@@ -18,8 +10,9 @@ export const enemiesSlice = createSlice({
   reducers: {
     addEnemy: enemiesAdapter.addOne,
     addEnemies: enemiesAdapter.addMany,
+    removeAllEnemies: enemiesAdapter.removeAll,
   },
 });
 
 export default enemiesSlice.reducer;
-export const { addEnemies, addEnemy } = enemiesSlice.actions;
+export const { addEnemies, addEnemy, removeAllEnemies } = enemiesSlice.actions;

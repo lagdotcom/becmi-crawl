@@ -1,7 +1,7 @@
 import { mkDice as d } from "../../tools";
-import { MonsterStats } from "../../types";
+import { EnemyStats } from "../../types";
 
-const Actaeon: MonsterStats = {
+const Actaeon: EnemyStats = {
   name: "actaeon",
   ac: 3,
   hd: 11,
