@@ -1,6 +1,7 @@
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 
 import {
+  AmmoOverrides,
   ArmorOverrides,
   CharId,
   EnemyId,
@@ -10,6 +11,7 @@ import {
 } from "../types";
 
 type ItemType =
+  | { type: "ammo"; overrides: AmmoOverrides }
   | { type: "armor"; overrides: ArmorOverrides }
   | { type: "shield"; overrides: ShieldOverrides }
   | { type: "weapon"; overrides: WeaponOverrides };

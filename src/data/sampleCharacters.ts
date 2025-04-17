@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import { getAdjustment, pcClassData, weaponLibrary } from "../lib";
 import { Item } from "../state/items";
 import { randomPick, rollHD } from "../tools";
-import { BECMIChar, CharacterClass, CharData, CharId } from "../types";
+import { CharacterClass, CharData, CharId } from "../types";
 
 type SamplePC = Pick<CharData, "name" | "characterClass" | "abilities">;
 
@@ -156,7 +156,7 @@ const classes = [
   "Magic User",
 ] as const;
 
-function makePC(sample: SamplePC): BECMIChar {
+function makePC(sample: SamplePC): CharData {
   const cd = pcClassData[sample.characterClass];
   const hp = rollHD(cd.hitDiceSize, getAdjustment(sample.abilities.con));
 
@@ -176,7 +176,7 @@ function makePC(sample: SamplePC): BECMIChar {
 function makeItem(
   pc: CharId,
   base: string,
-  type: "armor" | "shield" | "weapon",
+  type: Item["type"],
   equipped = true,
   qty = 1,
 ): Item {
@@ -203,12 +203,21 @@ function getRandomPC() {
       let uses2h = false;
       const weapons = randomPick(fighterWeapons);
       for (const name of weapons) {
-        inventory.push(
-          makeItem(pc.id, name, "weapon", inventory.length === 0, 1),
-        );
-
         const stats = weaponLibrary[name];
-        if (stats.th) uses2h = true;
+        if (stats.th) {
+          if (pc.characterClass === "Halfling") {
+            inventory.push(makeItem(pc.id, "short sword", "weapon", true));
+            break;
+          }
+          uses2h = true;
+        }
+
+        inventory.push(makeItem(pc.id, name, "weapon", inventory.length === 0));
+
+        if (stats.a) {
+          const [ammoItem, qty] = stats.a;
+          inventory.push(makeItem(pc.id, ammoItem, "ammo", true, qty));
+        }
       }
 
       const { armor, shield } = randomPick(fighterArmor);

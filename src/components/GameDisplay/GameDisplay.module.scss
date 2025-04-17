@@ -3,22 +3,39 @@
   flex-direction: column;
   height: 100vh;
 
-  h1 {
-  }
-
   main {
     flex: 1 1;
     overflow-y: scroll;
   }
 }
 
-.log {
-}
-
-.options {
-}
-
 .error {
   background-color: darkred;
   color: yellow;
+}
+
+.turnTaker {
+  cursor: help;
+}
+
+.overlay {
+  z-index: 10;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(var(--shadow-color));
+  opacity: var(--shadow-opacity);
+}
+
+.drawer {
+  z-index: 11;
+  background-color: var(--bg);
+  padding: 8px;
+  border-left: var(--fg) 4px solid;
+  box-shadow: rgba(var(--shadow-color), var(--shadow-opacity)) -8px 0 4px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
 }

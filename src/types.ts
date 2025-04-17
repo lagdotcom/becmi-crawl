@@ -62,7 +62,15 @@ export interface CharData {
   xp: ExperiencePoints;
 }
 
-export interface BECMIChar extends CharData {}
+export interface BECMIChar extends CharData {
+  ac: number;
+  armor?: BECMIArmor;
+  shield?: BECMIShield;
+  ammo: BECMIAmmo[];
+  weapons: BECMIWeapon[];
+  equipped: BECMIItem[];
+  carrying: BECMIItem[];
+}
 
 export type ThresholdTable<T, D> = [T, D][];
 
@@ -208,11 +216,17 @@ export type AttackRank =
   | "L"
   | "M";
 
-interface ItemBase {
+export interface ItemBase {
   name: string;
   value: Partial<Money>;
   weight: CoinWeight;
 }
+
+export interface AmmoItem extends ItemBase {
+  type: string;
+  damage?: Dice;
+}
+export type AmmoOverrides = Partial<AmmoItem>;
 
 export interface ArmorItem extends ItemBase {
   ac: number;
@@ -268,3 +282,33 @@ export interface WeaponItem extends ItemBase {
 //   hh: can be 1- or 2-handed, does not cause loss of initiative etc.
 //   th: only 2-handed. no shield, always lose individual initiative. halfling/small cannot use.
 export type WeaponOverrides = Partial<WeaponItem>;
+
+export interface BECMIAmmo extends AmmoItem {
+  category: "ammo";
+  equipped: boolean;
+  identified: boolean;
+  qty: number;
+}
+
+export interface BECMIArmor extends ArmorItem {
+  category: "armor";
+  equipped: boolean;
+  identified: boolean;
+  qty: number;
+}
+
+export interface BECMIShield extends ShieldItem {
+  category: "shield";
+  equipped: boolean;
+  identified: boolean;
+  qty: number;
+}
+
+export interface BECMIWeapon extends WeaponItem {
+  category: "weapon";
+  equipped: boolean;
+  identified: boolean;
+  qty: number;
+}
+
+export type BECMIItem = BECMIAmmo | BECMIArmor | BECMIShield | BECMIWeapon;

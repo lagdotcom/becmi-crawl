@@ -28,6 +28,7 @@ import {
   thac0 as normalManThac0,
 } from "./characters/normalMan";
 import { Thief } from "./characters/thief";
+import { ammo } from "./equipment/ammo";
 import { armor, shields } from "./equipment/armor";
 import { weapons } from "./equipment/weapons";
 
@@ -46,6 +47,8 @@ export const pcClassData: Record<CharacterClass, CharacterClassData> = {
   Mystic,
   Thief,
 };
+
+export const ammoLibrary = Object.fromEntries(ammo.map((i) => [i.name, i]));
 
 export const armorLibrary = Object.fromEntries(armor.map((i) => [i.name, i]));
 
@@ -92,6 +95,12 @@ export function getCharismaAdjustment(
 ): [reactionAdjustment: number, maxRetainers: number, retainerMorale: number] {
   const adjustment = getAdjustment(score);
   return [adjustment, 4 + adjustment, 7 + adjustment];
+}
+
+export function adjustmentToString(value: number) {
+  if (value < 0) return value.toString();
+  else if (value === 0) return "-";
+  else return `+${value}`;
 }
 
 function getNormalExperienceBonus(
@@ -356,4 +365,9 @@ export function getAttackRollByHD(
 
 export function getEnemyAttackRoll(m: EnemyStats, targetAC: number) {
   return getAttackRollByHD(m.hd, m.hdBonus ?? 0, targetAC);
+}
+
+export function getXPToNextLevel(pc: BECMIChar) {
+  const cd = pcClassData[pc.characterClass];
+  return pc.level >= cd.maximumLevel ? Infinity : cd.experience[pc.level];
 }

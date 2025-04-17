@@ -4,7 +4,7 @@ import { generateParty } from "../data/sampleCharacters";
 import { bestiary } from "../lib";
 import { addCharacter } from "../state/characters";
 import { addItem } from "../state/items";
-import { selectParty } from "../state/selectors";
+import { selectAllItems, selectParty } from "../state/selectors";
 import { AppAction, AppStore } from "../state/store";
 import isDefined from "../tools/isDefined";
 import { ResourceURL } from "../types";
@@ -75,9 +75,9 @@ export default class Engine {
   }
 
   get party() {
-    return selectParty(this.store.getState()).map(
-      (data) => new EngineChar(data),
-    );
+    const state = this.store.getState();
+    const items = selectAllItems(state);
+    return selectParty(state).map((data) => new EngineChar(data, items));
   }
 
   dispatch(action: AppAction) {

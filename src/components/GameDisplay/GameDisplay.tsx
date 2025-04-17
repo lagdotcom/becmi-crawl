@@ -1,56 +1,20 @@
-import {
-  memo,
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import * as Drawer from "@accessible/drawer";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { Button } from "react-aria-components";
 
 import { TaggedText } from "../../engine/events";
 import { useEngineEvent, useLibrary } from "../../hooks/LibraryProvider";
 import { selectCharacterIds, selectModuleById } from "../../state/selectors";
 import { useAppSelector } from "../../state/store";
 import { ModuleId } from "../../types";
-import displayReducer, { DisplayItem } from "./displayReducer";
+import PartyDisplay from "../PartyDisplay/PartyDisplay";
+import displayReducer from "./displayReducer";
+import GameChoice from "./GameChoice";
 import styles from "./GameDisplay.module.scss";
+import LogItem from "./LogItem";
 
 interface GameDisplayProps {
   moduleId: ModuleId;
-}
-
-const LogItem = memo(function LogItem({ item }: { item: DisplayItem }) {
-  switch (item.type) {
-    case "ul":
-      return (
-        <ul>
-          {item.items.map((ti, i) => (
-            <li key={i}>{ti.text}</li>
-          ))}
-        </ul>
-      );
-
-    case "paragraph":
-      return <p>{item.text}</p>;
-
-    case "error":
-      return <p className={styles.error}>{item.text}</p>;
-  }
-});
-
-function GameChoice({
-  choice,
-  onClick,
-}: {
-  choice: TaggedText;
-  onClick: () => void;
-}) {
-  return (
-    <li>
-      <button onClick={onClick}>{choice.text}</button>
-      {choice.tags.includes("turn") && <span> this will take a turn</span>}
-    </li>
-  );
 }
 
 export default function GameDisplay({ moduleId }: GameDisplayProps) {
@@ -61,13 +25,15 @@ export default function GameDisplay({ moduleId }: GameDisplayProps) {
   const mainRef = useRef<HTMLElement>(null);
   const [menuOptions, setMenuOptions] = useState<TaggedText[]>();
   const [display, df] = useReducer(displayReducer, []);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
   useEngineEvent("error", ({ value }) => df({ type: "error", value }), [df]);
   useEngineEvent("listItem", ({ value }) => df({ type: "item", value }), [df]);
   useEngineEvent("paragraph", ({ value }) => df({ type: "paragraph", value }), [
     df,
   ]);
-  useEngineEvent("choices", ({ values: value }) => setMenuOptions(value), [
+  useEngineEvent("choices", ({ values }) => setMenuOptions(values), [
     setMenuOptions,
   ]);
 
@@ -90,21 +56,41 @@ export default function GameDisplay({ moduleId }: GameDisplayProps) {
 
   return (
     <div className={styles.layout}>
-      <h1>{module.name}</h1>
+      <header>
+        <h1>{module.name}</h1>
+        <Drawer.Drawer open={isDrawerOpen} onChange={setDrawerOpen}>
+          <Drawer.Trigger>
+            <Button>Party</Button>
+          </Drawer.Trigger>
+          <Drawer.Target placement="right">
+            <div className={styles.drawer}>
+              <Drawer.CloseButton>
+                <Button>Close</Button>
+              </Drawer.CloseButton>
+              <PartyDisplay />
+            </div>
+          </Drawer.Target>
+        </Drawer.Drawer>
+      </header>
       <main ref={mainRef}>
         <div className={styles.log}>
           {display.map((item, i) => (
             <LogItem key={i} item={item} />
           ))}
         </div>
+      </main>
+      <footer>
         {menuOptions && (
           <ul className={styles.options}>
             {menuOptions.map((value, i) => (
-              <GameChoice key={i} onClick={() => choose(i)} choice={value} />
+              <GameChoice key={i} onPress={() => choose(i)} choice={value} />
             ))}
           </ul>
         )}
-      </main>
+      </footer>
+      {isDrawerOpen && (
+        <div onClick={closeDrawer} className={styles.overlay}></div>
+      )}
     </div>
   );
 }

@@ -3,12 +3,12 @@ import { CoinWeight, Feet, WeaponItem } from "../../types";
 
 const arrowBundle = ["arrow", 20] as const;
 const quarrelBundle = ["quarrel", 30] as const;
-const stoneBundle = ["stone", 30] as const;
+const pelletBundle = ["pellet", 30] as const;
 const dartBundle = ["dart", 5] as const;
 
 const arrowsWeight: CoinWeight = arrowBundle[1] / 2;
 const quarrelsWeight: CoinWeight = quarrelBundle[1] / 3;
-const stonesWeight: CoinWeight = stoneBundle[1] / 5;
+const pelletsWeight: CoinWeight = pelletBundle[1] / 5;
 const dartsWeight: CoinWeight = dartBundle[1] / 5;
 
 const battleAxe: WeaponItem = {
@@ -515,7 +515,7 @@ const sling: WeaponItem = {
   type: "other",
   damage: d(1, 4),
   value: { gp: 2 },
-  weight: 20 - stonesWeight,
+  weight: 20 - pelletsWeight,
   size: "S",
   c: true,
   m: [40, 80, 160],

@@ -13,6 +13,7 @@
     "find-deadcode": "ts-prune"
   },
   "dependencies": {
+    "@accessible/drawer": "^3.0.2",
     "@reduxjs/toolkit": "^2.6.1",
     "inkjs": "^2.3.2",
     "nanoid": "^5.1.5",
